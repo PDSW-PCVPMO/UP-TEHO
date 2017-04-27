@@ -157,6 +157,7 @@ public interface ServiciosUnidadProyectos {
    * @throws UnidadProyectosException Excepcion con datos del error
    */
   public List<Curso> consultarCursosPorPeriodo(String nombre) throws UnidadProyectosException;
+
     
   /**
    *  Consulta los salones dado el periodo academico
