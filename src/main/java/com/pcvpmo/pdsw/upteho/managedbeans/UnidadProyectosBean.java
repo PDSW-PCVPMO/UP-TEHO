@@ -16,6 +16,9 @@ import com.pcvpmo.pdsw.upteho.entities.Recurso;
 import com.pcvpmo.pdsw.upteho.services.ServiciosUnidadProyectos;
 import com.pcvpmo.pdsw.upteho.services.ServiciosUnidadProyectosFactory;
 import com.pcvpmo.pdsw.upteho.services.UnidadProyectosException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,16 +35,22 @@ public class UnidadProyectosBean implements Serializable {
     private Curso cursoActual; 
     private  int cohorteCursoActual;    
     private Programa programa;
-    private Asignatura asignatura;    
+    private Asignatura asignatura;
     private Periodo periodo;    
     private Cohorte cohorte;
-    private List<Profesor> profesor;
+    private List<Profesor> profesor;      
     private Profesor profesorSelect;
-    private Materia materia;
-    private String nameProf="a";
-    //Curso que se haya seleccionado en la pagina, este atributo puede cambiar por id o String dependiendo de como lo implementemos
+    private String nameProf;
+    private String idProgramaActual;
+    private String idAsignaturaActual;
+    private String siglaMateriaActual;
+    private String idRequisito;
+    private List<Programa> selectedPrograms;
+    private List<String> selectedSignatures;
+    private Integer programaActualID; 
     
     public UnidadProyectosBean() {
+        selectedPrograms=new ArrayList<>();
     }
     
     public String irPaginaCurso(Curso curso_actual) {
@@ -49,6 +58,22 @@ public class UnidadProyectosBean implements Serializable {
         return "InfoCurso";
     }
     
+    public String irPaginaAsignaturaXprog(Programa prog) {
+        System.out.println("se selecciono el programa con id: "+prog.getId()+" y nombre: "+prog.getNombre());
+        if (prog!=null){
+            programa = prog ;
+        }
+        return "InfoAsignaturas.xhtml";
+    }
+    
+    public String regresar(){
+        return "RegistrarNuevaMateria.xhtml";
+    }
+    
+    public String irPaginaRegistrarMateria() {
+        return "RegistrarNuevaMateria";
+    }
+        
     public String nombreCursoActual() {
         return cursoActual.getMateria().getNombre();
     }
@@ -105,7 +130,13 @@ public class UnidadProyectosBean implements Serializable {
      * @return una lista de Materia
      */
     public List<Materia> consultarMaterias() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        List<Materia> materias = null;
+        try{
+            materias = sp.consultarMaterias();
+        }catch(UnidadProyectosException ex){
+            Logger.getLogger(UnidadProyectosBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return materias;
     }
     
     /**
@@ -113,8 +144,14 @@ public class UnidadProyectosBean implements Serializable {
      * @param idAsignatura id de la asignatura
      * @return una lista con las Materias
      */
-     public List<Materia> consultarMaterias(int idAsignatura){
-         throw new UnsupportedOperationException("Not supported yet.");
+    public List<Materia> consultarMaterias(int idAsignatura){
+        List<Materia> materias = null;
+        try{
+            materias = sp.consultarMaterias(idAsignatura);
+        }catch(UnidadProyectosException ex){
+            Logger.getLogger(UnidadProyectosBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return materias;
      }
     
     /**
@@ -123,7 +160,13 @@ public class UnidadProyectosBean implements Serializable {
      */
     public List<Programa> consultarProgramas() {
         //TODO comprobar que es String para una lista desplegable
-        throw new UnsupportedOperationException("Not supported yet.");
+        List<Programa> lista = null;
+        try{
+            lista=sp.consultarProgramas();
+        }catch (UnidadProyectosException ex){
+            Logger.getLogger(UnidadProyectosBean.class.getName()).log(Level.SEVERE, null, ex);          
+        }
+        return lista;
     }
     
     /**
@@ -135,7 +178,7 @@ public class UnidadProyectosBean implements Serializable {
         //TODO comprobar que es String para una lista desplegable
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+        
     /**
      * Consulta los periodos academicos
      * @return una lista de Periodos academicos
@@ -241,7 +284,23 @@ public class UnidadProyectosBean implements Serializable {
         cohorteCursoActual=cohorte;
         return cohorte;
     }
-        
+    
+    /**
+     * get the current requisito
+     * @return 
+     */
+    public String getIdRequisito(){
+        return idRequisito;
+    }
+    
+    /**
+     * set the requisito
+     * @param currentr requisito for sets
+     */
+    public void setIdRequisito(String currentr){
+        idRequisito=currentr;
+    }
+    
     /**
      * Get the value of programa
      *
@@ -259,7 +318,81 @@ public class UnidadProyectosBean implements Serializable {
     public void setPrograma(Programa programa) {
         this.programa = programa;
     }    
+    
+    /**
+     * Get the value of programs selected
+     *
+     * @return the  list of programs
+     */
+    public List<Programa> getSelectedPrograms() {
+        return selectedPrograms;
+    }
 
+    /**
+     * Set the value of selectedPrograms
+     * @param p
+     */
+    public void setSelectedPrograms(List<Programa> p) {
+        this.selectedPrograms = p;
+    }    
+    
+    /**
+     * registra las asignaturas a las que se asociara la materia
+     */
+    public void rowSelect(){
+        if (selectedSignatures!=null){
+            selectedSignatures.add(idAsignaturaActual);
+        }else{
+            selectedSignatures = new ArrayList<>();
+        }
+    }  
+    
+    /**
+     * quita las materias que se des-seleccionen
+    */
+     public void rowUnSelect(){
+         if (selectedSignatures != null){
+            if (selectedSignatures.contains(idAsignaturaActual)){
+                selectedSignatures.remove(idAsignaturaActual);
+            }
+        }
+        else{
+            selectedSignatures = new ArrayList<>();
+        }
+    } 
+    
+    /**
+     * listener for the select on registrarNuevaMateria.xhtml
+    */
+    public void rowSelectCheckBox(){
+        programaActualID = selectedPrograms.get(selectedPrograms.size()-1).getId();
+    }
+     
+    /**
+     * listener for the unselect to update the values on view
+     */
+    public void rowUnSelectCheckBox(){
+        if (selectedPrograms.isEmpty()){
+            programaActualID = null;
+        }else{
+            programaActualID = selectedPrograms.get(selectedPrograms.size()-1).getId();
+        }
+    }
+    
+     public List<Asignatura> getAsignaturasXprog(){
+        List<Asignatura> lista = null;
+        try {
+            if (programa==null){
+                lista = sp.consultarAsignaturasxPrograma(null);
+            }else{
+                lista = sp.consultarAsignaturasxPrograma(programa.getId());
+            }
+        } catch (UnidadProyectosException ex) {
+            Logger.getLogger(UnidadProyectosBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return lista;
+    }
+     
     /**
      * Get the value of asignatura
      *
@@ -268,14 +401,18 @@ public class UnidadProyectosBean implements Serializable {
     public Asignatura getAsignatura() {
         return asignatura;
     }
+    
+    public String getNameProf() {
+        return nameProf;
+    }
 
-    /**
-     * Set the value of asignatura
-     *
-     * @param asignatura new value of asignatura
-     */
-    public void setAsignatura(Asignatura asignatura) {
-        this.asignatura = asignatura;
+    public void setNameProf(String nameProf) {
+        this.nameProf = nameProf;
+
+    }
+
+    public Profesor getProfesorSelect() {
+        return profesorSelect;
     }
     
     /**
@@ -286,69 +423,125 @@ public class UnidadProyectosBean implements Serializable {
     public Periodo getPeriodo() {
         return periodo;
     }
+    
+    public Curso cursoTemp(){
+        Programa pro=new Programa(5, "especializacion en proyectos");
+        Asignatura as=new Asignatura(69, "fundamentos", pro);
+        Materia ma=new Materia("INFU", "Introduccion a fundamentos", 4, "sdgb", as);
+        Periodo pe=new Periodo("2020-1", java.sql.Date.valueOf("2020-05-03"), java.sql.Date.valueOf("2020-05-15"));
+        Curso cu = new Curso(56, ma, pe);
+        return cu;
 
-    /**
-     * Set the value of periodo
-     *
-     * @param periodo new value of periodo
-     */
-    public void setPeriodo(Periodo periodo) {
-        this.periodo = periodo;
-    }
-     /**
-     * Get the value of cohorte
-     *
-     * @return the value of cohorte
-     */
-    public Cohorte getCohorte() {
-        return cohorte;
-    }
-
-    /**
-     * Set the value of cohorte
-     *
-     * @param cohorte new value of cohorte
-     */
-    public void setCohorte(Cohorte cohorte) {
-        this.cohorte = cohorte;
-    }
-
-    public List<Profesor> getProfesor() {
-        return profesor;
     }
     
-    /**
-     * Get the value of materia
-     *
-     * @return the value of materia
-     */
-    public Materia getMateria() {
-        return materia;
+    public String getIdAsignaturaActual(){
+        return this.idAsignaturaActual;
     }
-
-    /**
-     * Set the value of materia
-     *
-     * @param materia new value of materia
-     */
-    public void setMateria(Materia materia) {
-        this.materia = materia;
+    
+    public void setIdAsignaturaActual(String idAct){
+        this.idAsignaturaActual = idAct;
     }
-
-    public String getNameProf() {
-        return nameProf;
-    }
-
-    public void setNameProf(String nameProf) {
-        this.nameProf = nameProf;
-    }
-
-    public Profesor getProfesorSelect() {
-        return profesorSelect;
-    }
-
+    
     public void setProfesorSelect(Profesor profesorSelect) {
         this.profesorSelect = profesorSelect;
+    }
+
+    public Curso getCursoActual() {
+        return cursoActual;
+    }
+
+    public void setCursoActual(Curso cursoActual) {
+        this.cursoActual = cursoActual;
     }    
+
+    public int getCohorteCursoActual() {
+        return cohorteCursoActual;
+    }
+
+    public void setCohorteCursoActual(int cohorteCursoActual) {
+        this.cohorteCursoActual = cohorteCursoActual;
+    }
+
+    public String getIdProgramaActual() {
+        return idProgramaActual;
+    }
+
+    public void setIdProgramaActual(String idProgramaActual) {
+        this.idProgramaActual = idProgramaActual;
+    }
+
+    public Map<String, String> getProgramas() {
+        List<Programa> lista = null;
+        HashMap<String, String> res = new HashMap<>();
+        try {
+            lista = sp.consultarProgramas();
+        } catch (UnidadProyectosException ex) {
+            Logger.getLogger(UnidadProyectosBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        for (Programa programa: lista) {
+            res.put(programa.getNombre(), String.valueOf(programa.getId()));
+        }
+        return res;
+    }
+    
+    public Map<String, String> getAsignaturas() {
+        List<Asignatura> lista = null;
+        HashMap<String, String> res = new HashMap<>();
+        try {
+            if (idProgramaActual == null || idProgramaActual.equals("")) lista = sp.consultarAsignaturasxPrograma(null);
+            else lista = sp.consultarAsignaturasxPrograma(Integer.parseInt(idProgramaActual));
+        } catch (UnidadProyectosException ex) {
+            Logger.getLogger(UnidadProyectosBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        for (Asignatura asignatura: lista) {
+            res.put(asignatura.getNombre(), String.valueOf(asignatura.getId()));
+        }
+        return res;
+    }
+    
+    public Map<String, String> getMaterias() {
+        List<Materia> lista = null;
+        HashMap<String, String> res = new HashMap<>();
+        try {
+            if (idAsignaturaActual == null || idAsignaturaActual.equals("")) lista = sp.consultarMateriasxAsignatura(null);
+            else lista = sp.consultarMateriasxAsignatura(Integer.parseInt(idAsignaturaActual));
+        } catch (UnidadProyectosException ex) {
+            Logger.getLogger(UnidadProyectosBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        for (Materia materia: lista) {
+            res.put(materia.getNombre(), String.valueOf(materia.getSigla()));
+        }
+        return res;
+    }
+    
+    
+    public void changePrograma() {
+        idAsignaturaActual = null;
+        siglaMateriaActual = null;
+    }
+    
+    public void changeAsignatura() {
+        siglaMateriaActual = null;
+    }
+ 
+
+    public String getSiglaMateriaActual() {
+        return siglaMateriaActual;
+    }
+
+    public void setSiglaMateriaActual(String siglaMateriaActual) {
+        this.siglaMateriaActual = siglaMateriaActual;
+    }
+    
+    public String getResumen() {
+        String programa = idProgramaActual;
+        String asignatura = idAsignaturaActual;
+        String materia = siglaMateriaActual;
+        int cohorte = cohorteCursoActual;
+        return programa + " " + asignatura + " " + materia + " " + cohorte;
+        
+    }
+    
 }
 

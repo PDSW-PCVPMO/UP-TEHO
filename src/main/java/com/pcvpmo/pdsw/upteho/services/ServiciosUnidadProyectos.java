@@ -99,6 +99,15 @@ public interface ServiciosUnidadProyectos {
    public List<Asignatura> consultarAsignaturas()throws UnidadProyectosException;
    
    /**
+    *  Consulta las asignaturas por programa 
+    * @param programa nombre del programa
+    * @return lista con de las Asignaturas del programa
+    * //pos:List con  las asignaturas registradas en la base de datos
+    * @throws UnidadProyectosException Excepcion con datos del error
+    */
+   public List<Asignatura> consultarAsignaturasXProg(int programa)throws UnidadProyectosException;
+   
+   /**
     *  Consulta los profesores segun el filtro de busqueda
     * @param busqueda filtro de busqueda de profesores
     * @return lista con los Profesores que contienen en su nombre la palabra de la busqueda
@@ -193,13 +202,31 @@ public interface ServiciosUnidadProyectos {
     
     /**
      * Consulta las clases dado un periodo especifico
-     * //pre: si periodo es null, debe retornar todas las clases de todos los periodos
+     * //pos: si periodo es null, debe retornar todas las clases de todos los periodos
      * @param periodo periodo a consultar
      * @return Lista de clases
      * @throws UnidadProyectosException Excepcion con datos del error
      */
     public List<Clase> consultarClasesxPeriodo(String periodo) throws UnidadProyectosException;
     
+    /**
+     * Consulta las asignaturas dado un programa especifico
+     * //pos: si el programa es null, debe retornar todas las asignaturas
+     * @param idPrograma id del programa por el cual filtrar
+     * @return Lista de asignaturas
+     * @throws UnidadProyectosException Excepcion con datos del error
+     */
+    public List<Asignatura> consultarAsignaturasxPrograma(Integer idPrograma) throws UnidadProyectosException;
+    
+    /**
+     * Consulta las Materias dada una asignatura especifica
+     * //pos: si la sigla es null, debe retornar todas las materias
+     * @param sigla Sigla de la asignatura
+     * @return Lista de Materias
+     * @throws UnidadProyectosException Excepcion con datos del error
+     */
+    public List<Materia> consultarMateriasxAsignatura(Integer idAsignatura) throws UnidadProyectosException;
+
     /**
      * Agrega una clase a un curso especifico, si el horario del profesor coincide
      * @param idCurso
