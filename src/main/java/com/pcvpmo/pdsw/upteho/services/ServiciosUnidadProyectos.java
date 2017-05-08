@@ -91,12 +91,37 @@ public interface ServiciosUnidadProyectos {
    public List<Programa> consultarProgramas() throws UnidadProyectosException;
    
    /**
+    *  Consulta  programa por su id
+     * @param id frl programa
+    * @return Programa de la unidad de proyectos
+    * @throws UnidadProyectosException Excepcion con datos del error
+    */
+   public Programa consultarPrograma(Integer id) throws UnidadProyectosException;
+   
+   /**
     *  Consulta las asignaturas 
     * @return lista con de las Asignaturas
     * //pos:List con  las asignaturas registradas en la base de datos
     * @throws UnidadProyectosException Excepcion con datos del error
     */
    public List<Asignatura> consultarAsignaturas()throws UnidadProyectosException;
+   
+   /**
+    * consulta una asignatura dado su id
+    * @param id de la asignatura
+    * @return asignatura
+     * @throws com.pcvpmo.pdsw.upteho.services.UnidadProyectosException
+    */
+   public Asignatura consultarAsignatura(Integer id)throws UnidadProyectosException;
+   
+   /**
+    *  Consulta las asignaturas por programa 
+    * @param programa nombre del programa
+    * @return lista con de las Asignaturas del programa
+    * //pos:List con  las asignaturas registradas en la base de datos
+    * @throws UnidadProyectosException Excepcion con datos del error
+    */
+   public List<Asignatura> consultarAsignaturasXProg(int programa)throws UnidadProyectosException;
    
    /**
     *  Consulta los profesores segun el filtro de busqueda
@@ -193,13 +218,40 @@ public interface ServiciosUnidadProyectos {
     
     /**
      * Consulta las clases dado un periodo especifico
-     * //pre: si periodo es null, debe retornar todas las clases de todos los periodos
+     * //pos: si periodo es null, debe retornar todas las clases de todos los periodos
      * @param periodo periodo a consultar
      * @return Lista de clases
      * @throws UnidadProyectosException Excepcion con datos del error
      */
     public List<Clase> consultarClasesxPeriodo(String periodo) throws UnidadProyectosException;
     
+    /**
+     * Consulta las asignaturas dado un programa especifico
+     * //pos: si el programa es null, debe retornar todas las asignaturas
+     * @param idPrograma id del programa por el cual filtrar
+     * @return Lista de asignaturas
+     * @throws UnidadProyectosException Excepcion con datos del error
+     */
+    public List<Asignatura> consultarAsignaturasxPrograma(Integer idPrograma) throws UnidadProyectosException;
+    
+    /**
+     * Consulta las Materias dada una asignatura especifica
+     * //pos: si la sigla es null, debe retornar todas las materias
+     * @param sigla Sigla de la asignatura
+     * @return Lista de Materias
+     * @throws UnidadProyectosException Excepcion con datos del error
+     */
+    public List<Materia> consultarMateriasxAsignatura(Integer idAsignatura) throws UnidadProyectosException;
+    
+    /**
+     * Consulta las Materias dado un programa especifico
+     * //pos: si la sigla es null, debe retornar todas las materias
+     * @param sigla Sigla de la asignatura
+     * @return Lista de Materias
+     * @throws UnidadProyectosException Excepcion con datos del error
+     */
+    public List<Materia> consultarMateriasxPrograma(Integer idPrograma) throws UnidadProyectosException;
+
     /**
      * Agrega una clase a un curso especifico, si el horario del profesor coincide
      * @param idCurso

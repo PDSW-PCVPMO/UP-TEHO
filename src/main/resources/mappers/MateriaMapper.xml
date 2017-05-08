@@ -18,8 +18,78 @@
         <association property="programa" javaType="Programa" column="pro_" resultMap="ProgramaResult"/>
     </resultMap>
     
+    <resultMap type='Asignatura' id='AsignaturaPorProgramaResult'>
+        <id property='id' column='id'/>
+        <result property='nombre' column='nombre'/>
+    </resultMap>
+    
     <resultMap type="Programa" id="ProgramaResult">
         <id property="id" column="id"/>
         <result property="nombre" column="nombre"/>
     </resultMap>
+    
+    <resultMap type="Materia" id="MateriasResult">
+        <id property='sigla' column='sigla'/>
+        <result property='nombre' column='nombre'/>
+        <result property="creditos" column="creditos"/>
+        <result property="descripcion" column="descripcion"/>
+    </resultMap>
+    
+    <select parameterType="map" id="consultarMaterias" resultMap="MateriasResult">
+        
+        select
+        
+        sigla
+        nombre
+        
+        from Materias
+    </select>
+    
+    <select parameterType="map" id="consultarProgramas" resultMap="ProgramaResult">
+        select
+        
+        *
+        from Programas
+        
+    </select>
+    
+    <select parameterType="map" id="getAsigXProg" resultMap="AsignaturaPorProgramaResult">
+        
+        select
+        
+        id
+        nombre  
+              
+        from Asignaturas
+        where Asignaturas.programas_id = #{programa}
+        
+    </select>
+    
+    
+    
+    <insert parameterType = "map" id="registrarMateria">
+        INSERT INTO MATERIAS (sigla,nombre,creditos,descripcion,Asignaturas_id) VALUES(#{sigla},#{nombre},#{creditos},#{descripcion},#{asignatura});
+    </insert>
+
+    <select parameterType="map" id="consultarMateriasxAsignatura" resultMap="MateriaResult">
+        select sigla, nombre, creditos, descripcion
+        from materias
+        where Asignaturas_id=COALESCE(#{idAsignatura}, Asignaturas_id);     
+    </select>
+    
+    <select parameterType="map" id="consultarMateriasxPrograma" resultMap="MateriaResult">
+        select
+        pr.id, pr.nombre,
+        
+        asig.id, asig.nombre,
+        
+        ma.sigla, ma.nombre
+        
+        from
+        programa as pr
+        left join asignatura as asig on asig.programa_id=pr.id
+        left join materia as ma on asig.id=ma.asignatura_id
+        where pr.id=#{programa};     
+    </select>
+
 </mapper>

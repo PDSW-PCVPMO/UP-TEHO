@@ -5,28 +5,94 @@
       xmlns:p="http://primefaces.org/ui" 
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-     
-      
+    
     <h:head>
-        <h:outputStylesheet library="css" name="estilo.css" />        
-        <title>UP-TEHO</title>
-        
+        <h:outputStylesheet library="css" name="estilo.css" /> 
+        <script type="text/javascript">
+            function tryAlert(){
+                if (${UnidadProyectosBean.alertOfInvalidProgram}){
+                    alert("#{UnidadProyectosBean.getMesageForUser()}");
+                }
+            }
+           
+        </script>
+        <title>Registrar Nueva Materia</title>
     </h:head>
     <h:body>
-        <!-- Encabezado -->
-        <ui:include src="resources/inc/header.xhtml" />
-       
-        <!-- MENU -->
-        <ui:include src="resources/inc/menu.xhtml" />
+            <!-- Encabezado -->
+            <ui:include src="resources/inc/header.xhtml" />
+
+            <!-- MENU -->
+            <ui:include src="resources/inc/menu.xhtml" />
+            
+            <!-- CUERPO -->
+            <center><div style="max-width:97%;min-height:20px;background:rgba(241, 130, 7, 0.92);box-shadow:0 0 8px 0 rgba(0,0,0,.3);">
+            <div style="padding:15px;margin:auto;" >
+                <center><font color="#FFF" size="+2">REGISTRO NUEVA MATERIA</font></center>
+            </div>
+            </div></center>
         
-        <!-- CUERPO -->
-        <div style="max-width:100%;min-height:400px;background:#fff;box-shadow:0 0 8px 0 rgba(0,0,0,.3);">
-            <div style="padding:50px;margin:auto;max-width:70%;" >
-                registar nueva materia
+        <div style="max-width:100%;min-height:300px;background:#fff;box-shadow:0 0 8px 0 rgba(0,0,0,.3);">
+            <div style="padding:10px;margin:auto;" >
+                <h:form id="tabla_registro">
+                    
+                    <p:dataTable id="checkboxDT" var="prog" value="#{UnidadProyectosBean.consultarProgramas()}"  selection="#{UnidadProyectosBean.selectedPrograms}" rowKey="#{prog.id}" style="margin-bottom:0" rowIndexVar="rowIndex">
+                        <p:column selectionMode="multiple" style="width:16px;text-align:center" />
+                        <p:ajax event="rowSelectCheckbox" listener="#{UnidadProyectosBean.rowSelectCheckBox()}" oncomplete="alert('continue')" />
+                        <p:ajax event="rowUnselectCheckbox" listener="#{UnidadProyectosBean.rowUnSelectCheckBox()}" oncomplete="alert('continue')"/>
+                        <p:remoteCommand name="updateList" update="select"/>
+                        <p:column headerText="Programa" >
+                            <h:outputText value="#{prog.nombre}"/>
+                        </p:column>
+                        
+                        <p:column headerText="asignatura"> 
+                            <p:selectOneMenu id="select" widgetVar="select#{rowIndex}" value="#{UnidadProyectosBean.idAsignaturaActual}" style="width:250px">
+                                <f:selectItem itemLabel="Seleccionar Asignatura"  itemValue="0" noSelectionOption="true" />
+                                <f:selectItems value="#{UnidadProyectosBean.getAsignaturasXprog(prog)}"/>
+                                <p:ajax oncomplete="alert('continue')" listener="#{UnidadProyectosBean.changeOption(prog)}" event="change"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                        
+                        <p:column headerText="Accion">
+                             <center><h:commandButton value="Crear Nueva Asignatura" action="#{UnidadProyectosBean.irPaginaAsginatura()}"/></center>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+                <p:separator/>
+                <center>
+                    <p:commandButton value="Ver su seleccion" action="#{UnidadProyectosBean.irPaginaConsultarSeleccion('RegistrarNuevaMateria.xhtml')}"  title="vea su seleccion de materias y programas"/>                       
+                </center>
+                <p:separator/>
+                <h:panelGrid columns="3" cellpadding="10">
+                    <h:outputText value="Pre-requisitos:"></h:outputText>
+                    
+                    <p:selectOneMenu id="requisitos" value="#{UnidadProyectosBean.idRequisito}" style="width:250px">
+                        <f:selectItem itemLabel="Sin requisitos" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{UnidadProyectosBean.consultarMaterias()}" var="materias" itemLabel="#{materias.nombre}" />
+                    </p:selectOneMenu>
+                    
+                    <p:selectOneRadio id="requisito">
+                        <f:selectItem itemLabel="Co-requisito" itemValue="co" />
+                        <f:selectItem itemLabel="Requisito Completo" itemValue="re" />
+                    </p:selectOneRadio>
+                </h:panelGrid>
+                <p:separator/>
+                <center>
+                <h:panelGrid columns="2" cellpadding="10">
+                    <p:outputLabel for="nombreMateria" value="Nombre Materia" />
+                    <h:inputText class="textbox" id="nombreMateria" binding="#{nombreMateria}"/>
+                    
+                    <p:outputLabel for="siglas" value="Codigo (mnemonico)" />
+                    <h:inputText class="textbox" id="siglas" binding="#{siglas}"/>
+                    
+                    <p:outputLabel for="descripcion" value="Descripcion" />
+                    <p:inputTextarea class="textbox" id="descripcion" binding="#{descripcion}" rows="6" cols="33" />
+                    <h:form><h:commandButton value="Registrar" class="boton" action="#{UnidadProyectosBean.irPaginaCurso(curso)}"/></h:form>
+                    <h:form><h:commandButton value="Cancelar" class="boton" action="ConsultarMaterias.xhtml"/></h:form>
+                </h:panelGrid>
+                </center>
             </div>
         </div>
-        
-        <!--SUBPIE -->
         <ui:include src="resources/inc/footer.xhtml" />
     </h:body>
 </html>
