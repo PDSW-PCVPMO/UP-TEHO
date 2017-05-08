@@ -56,6 +56,13 @@ public interface MateriaMapper {
     List<Materia> consultarMateriasxAsignatura(@Param("idAsignatura")Integer idAsignatura);
 
     /**
+     * consulta las materias segun el programa
+     * @param programa
+     * @return 
+     */
+    List<Materia> consultarMateriasxPrograma(@Param("programa")Integer programa);
+
+    /**
      * consulta las materias registradas
      * @return listado materias
      */

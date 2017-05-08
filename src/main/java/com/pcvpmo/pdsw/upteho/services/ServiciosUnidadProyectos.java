@@ -242,6 +242,15 @@ public interface ServiciosUnidadProyectos {
      * @throws UnidadProyectosException Excepcion con datos del error
      */
     public List<Materia> consultarMateriasxAsignatura(Integer idAsignatura) throws UnidadProyectosException;
+    
+    /**
+     * Consulta las Materias dado un programa especifico
+     * //pos: si la sigla es null, debe retornar todas las materias
+     * @param sigla Sigla de la asignatura
+     * @return Lista de Materias
+     * @throws UnidadProyectosException Excepcion con datos del error
+     */
+    public List<Materia> consultarMateriasxPrograma(Integer idPrograma) throws UnidadProyectosException;
 
     /**
      * Agrega una clase a un curso especifico, si el horario del profesor coincide

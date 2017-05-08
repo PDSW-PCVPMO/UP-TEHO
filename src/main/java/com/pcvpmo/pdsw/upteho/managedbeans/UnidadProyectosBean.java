@@ -386,6 +386,29 @@ public class UnidadProyectosBean implements Serializable {
        
         return lista;
     }
+    
+    public List<Materia> consultaMateriasXasignatura(Asignatura asign){
+        List<Materia> lista = new ArrayList<>();
+        try{
+            if (asign==null){lista = sp.consultarMateriasxAsignatura(0);}
+            else{lista = sp.consultarMateriasxAsignatura(asign.getId());}
+        }catch (UnidadProyectosException ex){}
+       
+        return lista;
+    }
+    
+    public List<Materia> consultaMateriasXprog(){
+        List<Materia> lista = new ArrayList<>();
+        try{
+            if (idProgramaActual==null){lista = sp.consultarMateriasxPrograma(0);}
+            else{lista = sp.consultarMateriasxPrograma(Integer.parseInt(idProgramaActual));}
+        }catch (UnidadProyectosException ex){}
+        if (lista.size()!=0){
+            System.out.println(lista.get(0).getNombre());
+        }
+        
+        return lista;
+    }
    
     public void setDataTable(DataTable dt){
         this.dataTable=dt;

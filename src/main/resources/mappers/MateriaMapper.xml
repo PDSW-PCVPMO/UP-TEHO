@@ -76,5 +76,20 @@
         from materias
         where Asignaturas_id=COALESCE(#{idAsignatura}, Asignaturas_id);     
     </select>
+    
+    <select parameterType="map" id="consultarMateriasxPrograma" resultMap="MateriaResult">
+        select
+        pr.id, pr.nombre,
+        
+        asig.id, asig.nombre,
+        
+        ma.sigla, ma.nombre
+        
+        from
+        programa as pr
+        left join asignatura as asig on asig.programa_id=pr.id
+        left join materia as ma on asig.id=ma.asignatura_id
+        where pr.id=#{programa};     
+    </select>
 
 </mapper>

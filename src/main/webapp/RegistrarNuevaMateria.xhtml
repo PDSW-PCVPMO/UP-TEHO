@@ -87,9 +87,8 @@
                     
                     <p:outputLabel for="descripcion" value="Descripcion" />
                     <p:inputTextarea class="textbox" id="descripcion" binding="#{descripcion}" rows="6" cols="33" />
-                    
-                    <h:commandButton value="Registrar" class="boton" action="#{UnidadProyectosBean.irPaginaCurso(curso)}"/>
-                    <h:commandButton value="Cancelar" class="boton" action="#{UnidadProyectosBean.irPaginaCurso(curso)}"/>
+                    <h:form><h:commandButton value="Registrar" class="boton" action="#{UnidadProyectosBean.irPaginaCurso(curso)}"/></h:form>
+                    <h:form><h:commandButton value="Cancelar" class="boton" action="ConsultarMaterias.xhtml"/></h:form>
                 </h:panelGrid>
                 </center>
             </div>

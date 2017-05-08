@@ -27,8 +27,8 @@
                 <center>
                 <h:form id="seleccion">
                     <h:panelGrid columns="2" cellpadding="10">
-                        <p:outputLabel for="programa" value="Programa: "/>
-                        <p:selectOneMenu id="programa" value="#{UnidadProyectosBean.idProgramaActual}" style="width:250px">
+                        <p:outputLabel for="prog" value="Programa: "/>
+                        <p:selectOneMenu id="prog" value="#{UnidadProyectosBean.idProgramaActual}" style="width:250px">
                             <f:selectItem itemLabel="Seleccionar Programa" itemValue="" noSelectionOption="true"/>
                             <f:selectItems value="#{UnidadProyectosBean.getProgramas()}"/>
                             <p:ajax listener="#{UnidadProyectosBean.changePrograma()}" event="change" update=":#{p:component('tabla_programas')}"/>
@@ -39,12 +39,12 @@
                 </center>
                 <br></br>  
                 <h:form id="tabla_programas">
-                    <p:dataTable var="materia" value="#{UnidadProyectosBean}">
+                    <p:dataTable var="materia" value="#{UnidadProyectosBean.consultaMateriasXprog()}">
                     <p:column headerText="Asignatura">
-                        <h:outputText value="#{materia.getAsignaturas()}"/>
+                        <h:outputText value="#{materia.asignatura.nombre}"/>
                     </p:column>
                     <p:column headerText="Materia">
-                        <h:outputText value="#{materia.getMaterias()}"/>
+                        <h:outputText value="#{materia.nombre}"/>
                     </p:column>
                     <p:column headerText="Accion">
                         <center><h:commandButton value="Modificar Materia" action="#{UnidadProyectosBean.irPaginaCurso(curso)}"/></center>  
@@ -52,7 +52,7 @@
                     </p:dataTable>
                 </h:form>
                 <p:separator/>
-                <center><h:commandButton class="boton" value="Registrar Materia" actionListener="#{UnidadProyectosBean.irPaginaRegistrarMateria}"/></center>  
+                <center><h:form><h:commandButton class="boton" value="Registrar Materia" actionListener="RegistrarNuevaMateria.xhtml"/></h:form></center>  
                 </div>
         </div>
         

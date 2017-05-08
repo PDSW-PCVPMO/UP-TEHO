@@ -25,6 +25,8 @@ public interface MateriaDAO {
     
     List<Materia> consultarMateriasxAsignatura(Integer idAsignatura) throws PersistenceException;
     
+    List<Materia> consultarMateriasxPrograma(Integer programa) throws PersistenceException;
+    
     List<Materia> consultarMaterias() throws PersistenceException;
 
 }

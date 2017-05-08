@@ -262,6 +262,15 @@ public class ServiciosUnidadProyectosImpl implements ServiciosUnidadProyectos {
             throw new UnidadProyectosException("Error al consultar las materias por la asginatura: " + idAsignatura, ex);
         }
     }
+    
+    @Override
+    public List<Materia> consultarMateriasxPrograma(Integer idPrograma) throws UnidadProyectosException {
+        try {
+            return daoMateria.consultarMateriasxPrograma(idPrograma);
+        } catch (PersistenceException ex) {
+            throw new UnidadProyectosException("Error al consultar las materias por la asginatura: " + idPrograma, ex);
+        }
+    }
 
     @Override
     public List<Clase> consultarClases() throws UnidadProyectosException {
